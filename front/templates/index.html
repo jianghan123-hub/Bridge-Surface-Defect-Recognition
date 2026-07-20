@@ -1,0 +1,142 @@
+{% extends 'front_base.html' %}
+
+{% block title %}首页{% endblock %}
+
+{% block header %}
+<style>
+    .box-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    .info-image {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .box-image {
+        flex: 1;
+        min-width: 260px;
+        max-width: 340px;
+        box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,0.1), 0 0 0 1px rgba(10,10,10,0.02);
+        border-radius: 6px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        background: #fff;
+    }
+    .box-image:hover {
+        transform: translateY(-5px) scale(1.03);
+    }
+    .box-image img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        display: block;
+    }
+    .box-image .caption {
+        padding: 0.5em 1em;
+        font-size: 0.95em;
+        color: #3e8ed0;
+        background: #f8fbff;
+        text-align: center;
+    }
+    .box-content {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 6px;
+        box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,0.1), 0 0 0 1px rgba(10,10,10,0.02);
+    }
+    .box-content p {
+        text-indent: 2em;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #4a4a4a;
+    }
+    .features-list {
+        margin: 1.5em 0;
+        padding-left: 1.5em;
+    }
+    .features-list li {
+        margin-bottom: 0.7em;
+        font-size: 1.05em;
+        color: #363636;
+    }
+    .quick-actions {
+        margin-top: 2em;
+        display: flex;
+        gap: 1.5em;
+        flex-wrap: wrap;
+    }
+    @media screen and (max-width: 768px) {
+        .info-image {
+            flex-direction: column;
+            align-items: center;
+        }
+        .box-image {
+            min-width: 100%;
+            max-width: 100%;
+        }
+        .quick-actions {
+            flex-direction: column;
+            gap: 1em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block main-container %}
+<section class="section">
+    <div class="container">
+        <div class="box box-content">
+            <h1 class="title is-2 has-text-info">基于低空无人机视觉的桥梁表观病害精细化智能检测系统</h1>
+            <p>
+                本系统基于低空无人机影像与深度学习技术，自动识别桥梁外观裂缝、锈蚀、剥落、坑洞等表观病害，并提供像素级分割与量化指标。仅需上传无人机拍摄的桥梁表面图像，系统即可快速给出病害类型、位置及面积估计，助力桥梁巡检与结构养护。
+            </p>
+            <ul class="features-list">
+                <li><i class="fas fa-check-circle has-text-success"></i> 支持桥梁裂缝、锈蚀、剥落、坑洞等多类病害检测</li>
+                <li><i class="fas fa-check-circle has-text-success"></i> 提供像素级分割与病害量化（长度/面积/覆盖率）</li>
+                <li><i class="fas fa-check-circle has-text-success"></i> 针对复杂背景与微小病害优化，提升识别可靠性</li>
+                <li><i class="fas fa-check-circle has-text-success"></i> 支持用户注册、历史记录与巡检报告管理</li>
+            </ul>
+            <div class="info-image">
+                <div class="box-image">
+                    <img src="{% static 'image/健康桥梁.webp' %}" alt="桥梁健康表面">
+                    <div class="caption">桥梁健康表面</div>
+                </div>
+                <div class="box-image">
+                    <img src="{% static 'image/裂缝.JPG' %}" alt="裂缝病害示例">
+                    <div class="caption">裂缝病害示例</div>
+                </div>
+                <div class="box-image">
+                    <img src="{% static 'image/钢筋暴露.JPG' %}" alt="钢筋暴露病害示例">
+                    <div class="caption">钢筋暴露病害示例</div>
+                </div>
+                <div class="box-image">
+                    <img src="{% static 'image/破损断裂.JPG' %}" alt="破损/断裂病害示例">
+                    <div class="caption">破损/断裂病害示例</div>
+                </div>
+            </div>
+            <div class="quick-actions">
+                <a class="button is-info is-large" href="{% url 'image_handle:check' %}">
+                    <span class="icon"><i class="fas fa-search"></i></span>
+                    <span>立即检测桥梁病害</span>
+                </a>
+                <a class="button is-success is-large" href="{% url 'image_handle:intro' %}">
+                    <span class="icon"><i class="fas fa-info-circle"></i></span>
+                    <span>系统简介</span>
+                </a>
+                <a class="button is-warning is-large" href="{% url 'image_handle:treatment' %}">
+                    <span class="icon"><i class="fas fa-leaf"></i></span>
+                    <span>维护建议</span>
+                </a>
+                <a class="button is-light is-large" href="{% url 'image_handle:login' %}">
+                    <span class="icon"><i class="fas fa-user"></i></span>
+                    <span>用户登录/注册</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends 'front_base.html' %}
+
+{% block title %}用户登录/注册 - 基于低空无人机视觉的桥梁表观病害精细化智能检测系统{% endblock %}
+
+{% block main-container %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <!-- 消息通知区域 -->
+                {% if messages %}
+                <div class="notification-container">
+                    {% for message in messages %}
+                    <div class="notification is-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+                        <button class="delete"></button>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- 登录卡片 -->
+                <div class="card" id="login-card">
+                    <div class="card-header">
+                        <p class="card-header-title is-centered">
+                            <span class="icon"><i class="fas fa-sign-in-alt"></i></span>
+                            <span>用户登录</span>
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <form method="post" action="{% url 'image_handle:login' %}">
+                            {% csrf_token %}
+                            
+                            {% if login_form.non_field_errors %}
+                            <div class="notification is-danger">
+                                {{ login_form.non_field_errors }}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="field">
+                                <label class="label">用户名</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" name="username" placeholder="请输入用户名" required>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                </div>
+                                {% if login_form.username.errors %}
+                                <p class="help is-danger">{{ login_form.username.errors }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="field">
+                                <label class="label">密码</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="password" name="password" placeholder="请输入密码" required>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                </div>
+                                {% if login_form.password.errors %}
+                                <p class="help is-danger">{{ login_form.password.errors }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" name="remember_me">
+                                        记住我
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="field is-grouped is-grouped-centered">
+                                <div class="control">
+                                    <button class="button is-primary" type="submit">
+                                        <span class="icon"><i class="fas fa-sign-in-alt"></i></span>
+                                        <span>登录</span>
+                                    </button>
+                                </div>
+                                <div class="control">
+                                    <button class="button is-text" type="button" id="show-register">
+                                        没有账号？立即注册
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 注册卡片 (默认隐藏) -->
+                <div class="card is-hidden" id="register-card">
+                    <div class="card-header">
+                        <p class="card-header-title is-centered">
+                            <span class="icon"><i class="fas fa-user-plus"></i></span>
+                            <span>用户注册</span>
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <form method="post" action="{% url 'image_handle:register' %}">
+                            {% csrf_token %}
+                            
+                            {% if register_form.non_field_errors %}
+                            <div class="notification is-danger">
+                                {{ register_form.non_field_errors }}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="field">
+                                <label class="label">用户名</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" name="username" placeholder="请输入用户名(4-16位字符)" required>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                </div>
+                                {% if register_form.username.errors %}
+                                <p class="help is-danger">{{ register_form.username.errors }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="field">
+                                <label class="label">密码</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="password" name="password1" placeholder="请输入密码(至少8位)" required>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                </div>
+                                {% if register_form.password1.errors %}
+                                <p class="help is-danger">{{ register_form.password1.errors }}</p>
+                                {% endif %}
+                                <p class="help">建议使用字母、数字和符号的组合</p>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">确认密码</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="password" name="password2" placeholder="请再次输入密码" required>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                </div>
+                                {% if register_form.password2.errors %}
+                                <p class="help is-danger">{{ register_form.password2.errors }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" required>
+                                        我已阅读并同意<a href="#">用户协议</a>和<a href="#">隐私政策</a>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="field is-grouped is-grouped-centered">
+                                <div class="control">
+                                    <button class="button is-primary" type="submit">
+                                        <span class="icon"><i class="fas fa-user-plus"></i></span>
+                                        <span>注册</span>
+                                    </button>
+                                </div>
+                                <div class="control">
+                                    <button class="button is-text" type="button" id="show-login">
+                                        已有账号？立即登录
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // 切换登录/注册卡片
+    document.getElementById('show-register').addEventListener('click', function() {
+        document.getElementById('login-card').classList.add('is-hidden');
+        document.getElementById('register-card').classList.remove('is-hidden');
+    });
+
+    document.getElementById('show-login').addEventListener('click', function() {
+        document.getElementById('register-card').classList.add('is-hidden');
+        document.getElementById('login-card').classList.remove('is-hidden');
+    });
+
+    // 消息通知处理
+    document.addEventListener('DOMContentLoaded', function() {
+        // 关闭通知按钮
+        document.querySelectorAll('.notification .delete').forEach(function(deleteBtn) {
+            deleteBtn.addEventListener('click', function() {
+                this.parentNode.remove();
+            });
+        });
+        
+        // 如果有注册错误，自动显示注册卡片
+        var hasRegisterErrors = "{% if register_form.errors %}true{% else %}false{% endif %}" === "true";
+        if (hasRegisterErrors) {
+            document.getElementById('login-card').classList.add('is-hidden');
+            document.getElementById('register-card').classList.remove('is-hidden');
+        }
+    });
+</script>
+
+<style>
+    /* 添加一些自定义样式 */
+    .card {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 6px;
+    }
+    .card-header-title {
+        font-size: 1.2rem;
+        color: #4a4a4a;
+    }
+    .buttons.is-centered {
+        justify-content: center;
+    }
+    .notification-container {
+        margin-bottom: 1.5rem;
+    }
+    .notification {
+        margin-bottom: 1rem;
+    }
+    .help.is-danger {
+        color: #ff3860;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}

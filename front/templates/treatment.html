@@ -1,0 +1,104 @@
+{% extends 'front_base.html' %}
+
+{% block title %}桥梁病害维护建议{% endblock %}
+
+{% block main-container %}
+<section class="section">
+    <div class="container">
+        <div class="box">
+            <h1 class="title is-2">桥梁表观病害维护建议指南</h1>
+            <p class="subtitle is-5">本系统可识别的桥梁主要病害类型及维护建议</p>
+            
+            <div class="content mb-5">
+                <p>以下为桥梁常见表观病害的检测要点与维护建议，仅供参考。具体维护措施请结合现场检测结果和专业工程师评估。</p>
+            </div>
+
+            <!-- 混凝土裂缝 -->
+            <article class="message is-warning mt-5">
+                <div class="message-header">
+                    <p>混凝土裂缝检测与维护建议</p>
+                </div>
+                <div class="message-body content">
+                    <ol>
+                        <li><strong>定位与分级：</strong>根据裂缝宽度和长度判定等级，重点关注贯通裂缝、宽度大于0.3mm的裂缝。</li>
+                        <li><strong>表面清理：</strong>整理裂缝区域，清除浮灰、污染物，便于后续加固。</li>
+                        <li><strong>裂缝封闭：</strong>对细微裂缝可采用灌浆、环氧树脂注入等方式进行封闭处理。</li>
+                        <li><strong>监测复查：</strong>对重要裂缝设置监测点，定期拍照比对裂缝变化趋势。</li>
+                        <li><strong>预防措施：</strong>改善排水、防渗措施，减少冻融循环与盐蚀侵蚀。</li>
+                    </ol>
+                </div>
+            </article>
+
+            <!-- 钢筋锈蚀 -->
+            <article class="message is-success mt-5">
+                <div class="message-header">
+                    <p>钢筋锈蚀检测与维护建议</p>
+                </div>
+                <div class="message-body content">
+                    <ol>
+                        <li><strong>锈蚀识别：</strong>重点识别暴露钢筋、泛锈区、锈渍滴落等指标。</li>
+                        <li><strong>表面处理：</strong>清除锈蚀产物及浮锈，采用喷砂或机械打磨改善表面。</li>
+                        <li><strong>防腐涂层：</strong>采用防腐涂料或防护剂覆盖受损区域，减少进一步腐蚀。</li>
+                        <li><strong>局部加固：</strong>必要时进行钢筋补强或更换，并保证混凝土保护层厚度。</li>
+                        <li><strong>巡检频率：</strong>对高风险区域提高巡检频次，及时捕获初期锈蚀信号。</li>
+                    </ol>
+                </div>
+            </article>
+
+            <!-- 表面剥落 -->
+            <article class="message is-info mt-5">
+                <div class="message-header">
+                    <p>混凝土表面剥落维护建议</p>
+                </div>
+                <div class="message-body content">
+                    <ol>
+                        <li><strong>剥落区域确认：</strong>识别剥落面积与深度，关注承载构件、外露钢筋等关键部位。</li>
+                        <li><strong>清理与修复：</strong>清除松散碎片，采用修补砂浆或专用修补材料进行填补。</li>
+                        <li><strong>防护处理：</strong>涂刷防水防腐涂层，减少水分、离子进入引起的二次损伤。</li>
+                        <li><strong>根因排查：</strong>分析剥落原因（冻融、碳化、氯化物侵蚀等），制定治理方案。</li>
+                        <li><strong>后续跟踪：</strong>定期拍照对比溯源变化，评估修复效果。</li>
+                    </ol>
+                </div>
+            </article>
+
+            <!-- 其他异常 -->
+            <article class="message is-warning mt-5">
+                <div class="message-header">
+                    <p>其他病害/异常建议</p>
+                </div>
+                <div class="message-body content">
+                    <ol>
+                        <li><strong>渗水渗漏：</strong>发现水渗漏应及时查找源头并采取排水、堵漏措施。</li>
+                        <li><strong>涂层脱落/涂鸦：</strong>必要时进行涂层补刷，并加强巡检维护。</li>
+                        <li><strong>结构异变：</strong>如发现局部变形、脱落较大，应及时联系结构工程师评估。</li>
+                        <li><strong>数据记录：</strong>结合本系统生成的量化指标，建立病害档案，便于后续分析与管理。</li>
+                        <li><strong>专业咨询：</strong>如有疑问，可联系桥梁维护专家或相关单位，获取专业支持。</li>
+                    </ol>
+                </div>
+            </article>
+
+            <div class="has-text-centered mt-5">
+                <a href="{% url 'image_handle:check' %}" class="button is-info" id="back-to-check">
+                    <i class="fas fa-arrow-left"></i>&nbsp;返回检测
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // 返回按钮确认对话框
+    document.getElementById('back-to-check').addEventListener('click', function(e) {
+        e.preventDefault();
+        myalert.alertConfirm({
+            title: '返回检测页面',
+            html: '确定要返回检测页面吗？<br><small>当前页面的信息将不会被保存</small>',
+            confirmText: '确定返回',
+            cancelText: '留在此页',
+            confirmCallback: function() {
+                window.location.href = "{% url 'image_handle:check' %}";
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,437 @@
+{% extends 'front_base.html' %}
+
+{% block title %}
+    桥梁病害检测
+{% endblock %}
+
+{% block header %}
+    <div class="user-info" style="position: absolute; top: 1rem; right: 1rem;">
+        {% if user.is_authenticated %}
+        <div class="dropdown is-right is-hoverable">
+            <div class="dropdown-trigger">
+                <button class="button is-info is-small" aria-haspopup="true" aria-controls="dropdown-menu">
+                    <span class="icon">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <span>{{ user.username }}</span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                    {% if user.is_staff %}
+                    <a href="{% url 'admin:index' %}" class="dropdown-item">
+                        <i class="fas fa-cog"></i> 管理后台
+                    </a>
+                    <hr class="dropdown-divider">
+                    {% endif %}
+                    <a href="{% url 'image_handle:logout' %}" class="dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i> 退出登录
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <script src="{% static 'js/check.js' %}"></script>
+    <style>
+        .upload-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .corn-upload-box {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            background-color: #f8fbff;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .corn-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #363636;
+        }
+        .corn-title i {
+            color: #3e8ed0;
+        }
+        .input-image {
+            width: 100%;
+            height: 480px; /* 放大预览区域 */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #c8e1ff;
+            border-radius: 6px;
+            padding: 1rem;
+            background-color: #f5faff;
+            margin-bottom: 1rem;
+        }
+        .input-image img,
+        .input-image canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+        .input-image canvas {
+            z-index: 10;
+            pointer-events: none;
+        }
+        .preview-placeholder {
+            color: #7a7a7a;
+            text-align: center;
+            padding: 1rem;
+        }
+        .detect-btn {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        .result-section {
+            margin-top: 3rem;
+            display: none;
+        }
+        .disease-card {
+            border-left: 4px solid #3e8ed0;
+            margin-bottom: 1rem;
+        }
+        .global-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 300px;
+        }
+        .file-cta {
+            background-color: #3e8ed0;
+            color: white;
+        }
+        .file-cta:hover {
+            background-color: #3488ce;
+        }
+        @media screen and (max-width: 768px) {
+            .upload-container {
+                flex-direction: column;
+            }
+            .corn-upload-box {
+                padding: 1rem;
+            }
+            .user-info {
+                position: static;
+                margin-bottom: 1rem;
+                text-align: right;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block main-container %}
+<section class="section">
+    <div class="container">
+        <div id="global-notification" class="global-notification"></div>
+        <div class="box">
+            <div class="content">
+                <h1 class="title is-2">桥梁病害检测</h1>
+                <p class="subtitle is-5">请上传桥梁表面图像，系统将自动识别病害类型并给出维护建议</p>
+            </div>
+            <div class="upload-container">
+                <div class="corn-upload-box">
+                    <div class="corn-title">
+                        <i class="fas fa-building"></i>
+                        桥梁表面图像
+                    </div>
+                    <div class="input-image" id="corn-preview">
+                        <div class="preview-placeholder">
+                            <i class="fas fa-image fa-3x" style="color:#ddd; margin-bottom:1rem;"></i>
+                            <p>图片预览</p>
+                        </div>
+                        <canvas id="corn-canvas"></canvas>
+                        <img id="corn-image" alt="玉米叶片预览">
+                    </div>
+                    <div class="file is-info">
+                        <label class="file-label">
+                            <input class="file-input" type="file" id="corn-upload" accept="image/*">
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                    选择桥梁表面图片...
+                                </span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="detect-btn">
+                <button class="button is-info is-large" id="detect-btn" disabled>
+                    <span class="icon">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <span>开始识别</span>
+                </button>
+            </div>
+            <div class="result-section box" id="result-section">
+                <h2 class="title is-4">识别结果</h2>
+                <div class="content">
+                    <div id="result-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    // 全局状态管理
+    const state = {
+        file: null,
+        currentRequest: null
+    };
+    // 病害类别映射（英文类 -> 中文类）
+    const CLASS_TRANSLATIONS = {
+        Crack: '裂缝',
+        Breakage: '剥落/破损',
+        Comb: '蜂窝状破损',
+        Hole: '孔洞',
+        Reinforcement: '钢筋暴露/锈蚀',
+        Seepage: '渗漏',
+        crack: '裂缝',
+        corrosion: '锈蚀',
+        spalling: '剥落',
+        other: '其他'
+    };
+    // 不同类别框颜色
+    const CLASS_COLORS = {
+        Crack: '#f94144',
+        Breakage: '#f3722c',
+        Comb: '#f9c74f',
+        Hole: '#90be6d',
+        Reinforcement: '#43aa8b',
+        Seepage: '#577590',
+        crack: '#f94144',
+        corrosion: '#ffb703',
+        spalling: '#9d0208',
+        other: '#6a4c93'
+    };
+    // DOM元素引用
+    const elements = {
+        cornUpload: document.getElementById('corn-upload'),
+        cornImage: document.getElementById('corn-image'),
+        cornPlaceholder: document.querySelector('#corn-preview .preview-placeholder'),
+        detectBtn: document.getElementById('detect-btn'),
+        resultSection: document.getElementById('result-section'),
+        resultContent: document.getElementById('result-content'),
+        cornCanvas: document.getElementById('corn-canvas'),
+        notificationContainer: document.getElementById('global-notification')
+    };
+    // 初始化事件监听
+    function initEventListeners() {
+        elements.cornUpload.addEventListener('change', handleFileUpload);
+        elements.detectBtn.addEventListener('click', handleDetection);
+    }
+    // 文件上传处理
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            clearCanvas();
+            elements.cornImage.src = e.target.result;
+            elements.cornImage.style.display = 'block';
+            elements.cornPlaceholder.style.display = 'none';
+            state.file = file;
+            elements.detectBtn.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    }
+    // 显示通知
+    function showNotification(message, type = 'info', duration = 5000) {
+        const notification = document.createElement('div');
+        notification.className = `notification is-${type}`;
+        notification.innerHTML = `
+            <button class="delete"></button>
+            ${message}
+        `;
+        elements.notificationContainer.appendChild(notification);
+        notification.querySelector('.delete').addEventListener('click', () => {
+            notification.remove();
+        });
+        if (duration > 0) {
+            setTimeout(() => notification.remove(), duration);
+        }
+    }
+    // 重置画布
+    function clearCanvas() {
+        const canvas = elements.cornCanvas;
+        const img = elements.cornImage;
+        if (!canvas || !img) return;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.style.display = 'none';
+    }
+
+    // 根据检测结果绘制 bbox
+    function drawDetections(detections) {
+        const canvas = elements.cornCanvas;
+        const img = elements.cornImage;
+        if (!canvas || !img || !Array.isArray(detections) || detections.length === 0) {
+            clearCanvas();
+            return;
+        }
+
+        const w = img.clientWidth;
+        const h = img.clientHeight;
+        const naturalW = img.naturalWidth;
+        const naturalH = img.naturalHeight;
+
+        if (naturalW === 0 || naturalH === 0) {
+            clearCanvas();
+            return;
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.display = 'block';
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, w, h);
+        ctx.lineWidth = Math.max(2, Math.round(Math.min(w, h) / 200));
+        ctx.font = `${Math.max(12, Math.round(Math.min(w, h) / 25))}px Arial`;
+        ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+        ctx.textBaseline = 'top';
+
+        const scaleX = w / naturalW;
+        const scaleY = h / naturalH;
+
+        detections.forEach(det => {
+            const [x1, y1, x2, y2] = det.bbox;
+            const rectX = x1 * scaleX;
+            const rectY = y1 * scaleY;
+            const rectW = (x2 - x1) * scaleX;
+            const rectH = (y2 - y1) * scaleY;
+
+            const className = det.class || '';
+            const classNameCn = CLASS_TRANSLATIONS[className] || className;
+            const color = CLASS_COLORS[className] || '#a1c181';
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = Math.max(2, Math.round(Math.min(w, h) / 180));
+            ctx.strokeRect(rectX, rectY, rectW, rectH);
+
+            const label = `${classNameCn} ${Math.round(det.confidence * 100)}%`;
+            const textWidth = ctx.measureText(label).width;
+            const textHeight = parseInt(ctx.font, 10) + 4;
+
+            const labelY = rectY - textHeight < 0 ? rectY : rectY - textHeight;
+            ctx.fillStyle = `${color}88`;
+            ctx.fillRect(rectX, labelY, textWidth + 8, textHeight);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(label, rectX + 4, labelY);
+        });
+    }
+
+    // 检测流程处理
+    async function handleDetection() {
+        if (state.currentRequest) {
+            showNotification('已有检测正在进行', 'warning');
+            return;
+        }
+        try {
+            if (!state.file) {
+                showNotification('请上传桥梁表面图片', 'warning');
+                return;
+            }
+            elements.detectBtn.classList.add('is-loading');
+            state.currentRequest = true;
+            // 1. 上传文件
+            const uploadResult = await uploadFile();
+            if (uploadResult.code !== 200) {
+                throw new Error(uploadResult.message || '文件上传失败');
+            }
+            // 2. 执行识别
+            const checkResult = await performDetection(uploadResult.data.img_url);
+            // 3. 显示结果
+            renderResults(checkResult.data);
+            showNotification('检测完成', 'success');
+        } catch (error) {
+            console.error('检测流程错误:', error);
+            showNotification(`检测失败: ${error.message}`, 'danger');
+        } finally {
+            elements.detectBtn.classList.remove('is-loading');
+            state.currentRequest = null;
+        }
+    }
+    // 文件上传函数
+    async function uploadFile() {
+        const formData = new FormData();
+        formData.append('img_file', state.file);
+        const response = await fetch('{% url "image_handle:upload_image" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+        return await response.json();
+    }
+    // 执行识别函数
+    async function performDetection(imgUrl) {
+        const response = await fetch('{% url "image_handle:check_img" %}', {
+            method: 'POST',
+            body: JSON.stringify({ img_url: imgUrl }),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+        return await response.json();
+    }
+    // 渲染结果
+    function renderResults(data) {
+        let html = '';
+
+        // 如果有检测框信息，展示出来
+        if (data.detections && Array.isArray(data.detections) && data.detections.length > 0) {
+            html += '<div class="box" style="margin-top: 1rem;">';
+            html += '<h3 class="title is-5">检测结果明细</h3>';
+            html += '<table class="table is-fullwidth is-striped"><thead><tr><th>类别</th><th>置信度</th><th>bbox[x1,y1,x2,y2]</th></tr></thead><tbody>';
+            data.detections.forEach(det => {
+                const classCn = CLASS_TRANSLATIONS[det.class] || det.class;
+                html += `<tr><td>${classCn}</td><td>${(det.confidence * 100).toFixed(1)}%</td><td>${det.bbox.map(v => v.toFixed(1)).join(', ')}</td></tr>`;
+            });
+            html += '</tbody></table></div>';
+        }
+
+        // 显示使用的模型和路径（调试用）
+        if (data.model_used) {
+            html += `<div class="box" style="margin-top: 1rem;">
+                        <p><strong>模型类型：</strong>${data.model_used}</p>
+                        <p style="word-break: break-all;"><strong>模型路径：</strong>${data.model_path || ''}</p>
+                    </div>`;
+        }
+
+        elements.resultContent.innerHTML = html;
+        elements.resultSection.style.display = 'block';
+        drawDetections(data.detections);
+        elements.resultSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        initEventListeners();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,201 @@
+{% extends 'front_base.html' %}
+
+{% block title %}系统简介{% endblock %}
+
+{% block header %}
+    <style>
+        .intro-hero {
+            background: linear-gradient(135deg, #3e8ed0 0%, #209cee 100%);
+            color: white;
+            padding: 3rem 1.5rem;
+            margin-bottom: 3rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .intro-hero .title {
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        .intro-hero .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            border-radius: 6px;
+            overflow: hidden;
+            border-top: 3px solid #3e8ed0;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(62, 142, 208, 0.2);
+        }
+        .feature-card .card-content {
+            padding: 1.5rem;
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #3e8ed0;
+        }
+        .system-intro {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 6px;
+            box-shadow: 0 0.5em 1em -0.125em rgba(62, 142, 208, 0.1), 0 0 0 1px rgba(62, 142, 208, 0.02);
+            margin-bottom: 3rem;
+            border-left: 4px solid #3e8ed0;
+        }
+        .system-intro p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            text-indent: 2em;
+        }
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .gallery-item {
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(62, 142, 208, 0.1);
+            transition: transform 0.3s ease;
+            border: 1px solid #e6f2ff;
+        }
+        .gallery-item:hover {
+            transform: scale(1.03);
+            border-color: #3e8ed0;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .gallery-caption {
+            padding: 1rem;
+            background-color: #f5faff;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #3a3a3a;
+        }
+        @media screen and (max-width: 768px) {
+            .image-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block main-container %}
+    <!-- 英雄区域 -->
+    <div class="intro-hero">
+        <div class="container">
+            <h1 class="title is-2">基于低空无人机视觉的桥梁表观病害精细化智能检测系统</h1>
+            <h2 class="subtitle is-4">面向裂缝、锈蚀、剥落的像素级检测与量化评估</h2>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 系统介绍部分 -->
+        <div class="system-intro">
+            <h3 class="title is-3 has-text-centered">系统简介</h3>
+            <p>
+                本系统基于低空无人机巡检影像与先进视觉AI算法，实现桥梁表观病害（裂缝、锈蚀、剥落等）的自动检测与量化。系统支持像素级分割、病害长度/面积评估与病情等级判定，助力桥梁巡检、养护与安全评估。
+            </p>
+            <h4 class="title is-5 has-text-info">数据集与类别</h4>
+            <p>
+                系统训练数据来源于多种桥梁结构的无人机采集影像，涵盖常见表观病害：混凝土裂缝、钢筋锈蚀、表面剥落、涂层脱落等。数据集包含复杂背景（阴影、水面反光、植被遮挡等），提升模型在实际巡检场景中的鲁棒性。
+            </p>
+            <h4 class="title is-5 has-text-info">技术方案</h4>
+            <ul>
+                <li>采用高分辨率检测与语义分割模型（如DeepLabV3+/U-Net、EfficientDet）实现像素级病害定位与分割。</li>
+                <li>引入多尺度特征融合与数据增强，提升对微小裂缝和低对比度病害的识别能力。</li>
+                <li>支持滑窗推理与病害后处理，输出病害长度、面积、覆盖率等量化指标。</li>
+                <li>支持模型导出为ONNX格式，便于在边缘设备或无人机端部署运行。</li>
+            </ul>
+            <h4 class="title is-5 has-text-info">评估与可视化</h4>
+            <p>
+                系统支持IoU、mAP、Precision/Recall、F1-score等评估指标，并提供可视化叠加结果、病害轮廓和统计报表，确保检测结果可解释、可复现。
+            </p>
+            <h4 class="title is-5 has-text-info">应用场景</h4>
+            <ul>
+                <li>无人机日常桥梁巡检，快速发现结构表面病害。</li>
+                <li>城市桥梁运营维护决策支持，提供病害量化分析。</li>
+                <li>灾后桥梁安全评估，快速筛查关键病害区域。</li>
+                <li>桥梁病害数据库构建与历史趋势分析。</li>
+            </ul>
+        </div>
+
+        <!-- 技术特点部分 -->
+        <h3 class="title is-3 has-text-centered">技术特点</h3>
+        <div class="columns is-multiline">
+            <div class="column is-one-third">
+                <div class="feature-card card">
+                    <div class="card-content has-text-centered">
+                        <div class="feature-icon">
+                            <i class="fas fa-microscope"></i>
+                        </div>
+                        <h4 class="title is-4">微小病害细粒度识别</h4>
+                        <p>针对高空拍摄图像优化检测策略，提升对细小裂缝、初期锈蚀等微小病害的识别能力。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-one-third">
+                <div class="feature-card card">
+                    <div class="card-content has-text-centered">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4 class="title is-4">复杂环境鲁棒分析</h4>
+                        <p>支持阴影、水面反光、植被遮挡等干扰，保证无人机巡检场景下的稳定性。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-one-third">
+                <div class="feature-card card">
+                    <div class="card-content has-text-centered">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h4 class="title is-4">可视化量化输出</h4>
+                        <p>输出病害轮廓、长度/面积/覆盖率统计，以及多维度评估指标，便于维护决策。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图片展示部分 -->
+        <h3 class="title is-3 has-text-centered">系统展示</h3>
+        <div class="image-gallery">
+            <div class="gallery-item">
+                <img src="{% static 'image/主页.png' %}" alt="系统界面展示">
+                <div class="gallery-caption">直观的主页展示界面</div>
+            </div>
+            <div class="gallery-item">
+                <img src="{% static 'image/病害检测结果.png' %}" alt="病害检测示例">
+                <div class="gallery-caption">像素级病害检测与分割结果</div>
+            </div>
+            <div class="gallery-item">
+                <img src="{% static 'image/维护建议.png' %}" alt="维护建议示例">
+                <div class="gallery-caption">维护建议与量化评估报告</div>
+            </div>
+            <div class="gallery-item">
+                <img src="{% static 'image/模型结构.png' %}" alt="模型结构可视化">
+                <div class="gallery-caption">模型结构与运行可视化</div>
+            </div>
+        </div>
+
+        <!-- 行动召唤按钮 -->
+        <div class="has-text-centered" style="margin: 3rem 0;">
+            <a href="{% url 'image_handle:check' %}" class="button is-info is-large">
+                <span class="icon">
+                    <i class="fas fa-camera"></i>
+                </span>
+                <span>立即体验桥梁病害检测</span>
+            </a>
+        </div>
+    </div>
+{% endblock %}

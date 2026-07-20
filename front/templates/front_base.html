@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>基于低空无人机视觉的桥梁表观病害精细化智能检测系统{% block title %}{% endblock %}</title>
+
+    <!-- 站点图标（避免浏览器默认访问 /favicon.ico 造成 404） -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext x='0' y='14' font-size='16'%3E%F0%9F%8C%BD%3C/text%3E%3C/svg%3E">
+
+    <!-- Bulma CSS（本地静态资源） -->
+    <link rel="stylesheet" href="{% static 'css/bulma.css' %}">
+
+    <!-- 自定义CSS和JS -->
+    <link rel="stylesheet" href="{% static 'css/sweetalert.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/sweetalert.min.js' %}"></script>
+    <script src="{% static 'js/myalert.js' %}"></script>
+    <script>
+        swal.setDefaults({ html: true });
+        allowHtml: true
+    </script>
+
+    <style>
+        body {
+            background: #eef6fb;
+            color: #1a2233;
+        }
+        .navbar {
+            background: linear-gradient(90deg, #1f3f5f 0%, #225f7f 100%);
+            border-bottom: 2px solid #1d577b;
+        }
+        .navbar .navbar-item, .navbar .navbar-brand .navbar-item {
+            color: #f5fbff !important;
+            font-weight: 600;
+        }
+        .navbar .navbar-item.is-active {
+            background-color: rgba(255, 255, 255, 0.18);
+            border-radius: 8px;
+            color: #ffffff !important;
+        }
+        .navbar-burger span {
+            background-color: #ffffff;
+        }
+        .footer {
+            background-color: #152539 !important;
+            color: #c7deed;
+        }
+        .footer h4, .footer .about, .footer .column {
+            color: #c7deed;
+        }
+        .button.is-info {
+            background-color: #2292b0;
+            border-color: #1d7c94;
+            color: #fff;
+        }
+        .button.is-success {
+            background-color: #2fa46f;
+            border-color: #238b5e;
+        }
+        .button.is-warning {
+            background-color: #f0a33b;
+            border-color: #dc8f2f;
+            color: #1f2f3b;
+        }
+        .button.is-light {
+            background-color: #f6f9fe;
+            border-color: #cfdff2;
+            color: #1f3a58;
+        }
+        .box-content {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(14, 44, 86, 0.12);
+            border: 1px solid rgba(32, 89, 124, 0.14);
+        }
+        .message-body ul {
+            margin-top: 0.5em;
+            margin-left: 1.5em;
+        }
+        @media screen and (max-width: 768px) {
+            .message-header {
+                padding: 0.5em 1em;
+            }
+        }
+    </style>
+
+    {% block header %}
+    {% endblock %}
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar is-info" role="navigation" aria-label="main navigation">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="{% url 'image_handle:index' %}">
+                    <strong>低空无人机桥梁病害精细检测系统</strong>
+                </a>
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mymenu">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+            <div id="mymenu" class="navbar-menu">
+                <div class="navbar-start">
+                    <a class="navbar-item {% if request.resolver_match.url_name == 'index' %}is-active{% endif %}" 
+                       href="{% url 'image_handle:index' %}">
+                        主页
+                    </a>
+                    <a class="navbar-item {% if request.resolver_match.url_name == 'intro' %}is-active{% endif %}" 
+                       href="{% url 'image_handle:intro' %}">
+                        系统简介
+                    </a>
+                    <a class="navbar-item {% if request.resolver_match.url_name == 'check' %}is-active{% endif %}" 
+                       href="{% url 'image_handle:check' %}">
+                        桥梁病害检测
+                    </a>
+                    <a class="navbar-item {% if request.resolver_match.url_name == 'treatment' %}is-active{% endif %}" 
+                       href="{% url 'image_handle:treatment' %}">
+                        维护建议
+                    </a>
+                    <a class="navbar-item {% if request.resolver_match.url_name == 'login' %}is-active{% endif %}" 
+                       href="{% url 'image_handle:login' %}">
+                        用户注册/登录
+                    </a>
+                    <a class="navbar-item {% if request.resolver_match.url_name == 'logout' %}is-active{% endif %}" 
+                       href="{% url 'image_handle:logout' %}">
+                        登出
+                    </a>
+                    <a class="navbar-item" href="/admin/" target="_blank">
+                        后台管理
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <section class="section">
+        <div class="container">
+            {% block main-container %}
+            {% endblock %}
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer" style="background-color: #3e8ed0">
+        <div class="container">
+            <div class="columns footer-top">
+                <div class="column is-6">
+                    <h4>基于低空无人机视觉的桥梁表观病害精细化智能检测系统</h4>
+                </div>
+                <div class="column is-5 is-offset-1">
+                    <div class="about">本系统用于桥梁外观病害的智能检测、像素级分割与量化分析。</div>
+                </div>
+            </div>
+            <hr>
+            <div class="columns footer-bottom">
+                <div class="column">
+                    <!-- 页脚内容 -->
+                    &copy; 2026 基于低空无人机视觉的桥梁表观病害精细化智能检测系统
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 响应式导航栏的JS -->
+    <script>
+        $(document).ready(function() {
+            $(".navbar-item").removeClass("is-active");
+            $(".navbar-item[href='" + window.location.pathname + "']").addClass("is-active");
+            $(".navbar-burger").click(function() {
+                $(".navbar-burger").toggleClass("is-active");
+                $(".navbar-menu").toggleClass("is-active");
+            });
+        });
+    </script>
+</body>
+</html>
